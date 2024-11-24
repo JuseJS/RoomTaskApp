@@ -23,7 +23,16 @@ fun TaskApp(viewModel: TaskViewModel) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Task Manager", style = MaterialTheme.typography.titleLarge) }
+                title = {
+                    Text(
+                        "Task Manager",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             )
         }
     ) { paddingValues ->
@@ -38,8 +47,13 @@ fun TaskApp(viewModel: TaskViewModel) {
             OutlinedTextField(
                 value = newTaskName,
                 onValueChange = { newTaskName = it },
-                label = { Text("New Task") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("New Task", color = MaterialTheme.colorScheme.onBackground) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                    textColor = MaterialTheme.colorScheme.onBackground
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -52,7 +66,11 @@ fun TaskApp(viewModel: TaskViewModel) {
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
                 Text("Add Task")
             }
@@ -71,6 +89,9 @@ fun TaskItem(task: Task, onDelete: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
@@ -80,9 +101,17 @@ fun TaskItem(task: Task, onDelete: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(task.name, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                task.name,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete Task")
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Delete Task",
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }
