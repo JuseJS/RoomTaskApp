@@ -1,15 +1,13 @@
 package org.iesharia.composeroomapp.view
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.iesharia.composeroomapp.data.Task
+import org.iesharia.composeroomapp.data.entity.Task
 import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +61,7 @@ fun TaskList(viewModel: TaskViewModel) {
             )
 
             Spacer(modifier = Modifier.height(8.dp))
+            /*
             Button(
                 onClick = {
                     if (newTaskName.isNotBlank()) {
@@ -80,8 +79,8 @@ fun TaskList(viewModel: TaskViewModel) {
             ) {
                 Text("Add Task")
             }
+            */
 
-            Spacer(modifier = Modifier.height(16.dp))
             tasks.forEach { task ->
                 TaskItem(task = task, onDelete = { viewModel.deleteTask(task.id) })
             }
@@ -107,7 +106,7 @@ fun TaskItem(task: Task, onDelete: () -> Unit) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = task.name,
+                text = task.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSecondaryContainer
             )
