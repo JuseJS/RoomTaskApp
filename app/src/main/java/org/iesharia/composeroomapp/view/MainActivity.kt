@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.iesharia.composeroomapp.data.AppDatabase
+import org.iesharia.composeroomapp.data.database.AppDatabase
 import org.iesharia.composeroomapp.ui.theme.RoomTaskAppTheme
 import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 import org.iesharia.composeroomapp.viewmodel.TaskViewModelFactory
