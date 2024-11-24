@@ -14,7 +14,7 @@ import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskApp(viewModel: TaskViewModel) {
+fun TaskList(viewModel: TaskViewModel) {
     val tasks by viewModel.tasks.collectAsState()
 
     var newTaskName by remember { mutableStateOf("") }
@@ -25,13 +25,13 @@ fun TaskApp(viewModel: TaskViewModel) {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Task Manager",
+                        "Lista de Tareas",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.secondary // Color más distintivo
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.background // Fondo transparente
                 )
             )
         }
@@ -47,12 +47,18 @@ fun TaskApp(viewModel: TaskViewModel) {
             OutlinedTextField(
                 value = newTaskName,
                 onValueChange = { newTaskName = it },
-                label = { Text("New Task", color = MaterialTheme.colorScheme.onBackground) },
+                label = { Text("New Task") },
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
-                    textColor = MaterialTheme.colorScheme.onBackground
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
 
@@ -68,7 +74,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
@@ -86,33 +92,37 @@ fun TaskApp(viewModel: TaskViewModel) {
 @Composable
 fun TaskItem(task: Task, onDelete: () -> Unit) {
     Card(
+        onClick = { /* Do something */ },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 8.dp, horizontal = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
         ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth()
         ) {
             Text(
-                task.name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                text = task.name,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
-            IconButton(onClick = onDelete) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Delete Task",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
+            Text(
+                text = "Tipo de Tarea",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500...",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
         }
     }
 }
+
