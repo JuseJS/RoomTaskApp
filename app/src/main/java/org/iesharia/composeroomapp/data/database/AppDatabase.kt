@@ -5,11 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import org.iesharia.composeroomapp.data.dao.TaskDao
+import org.iesharia.composeroomapp.data.dao.TaskTypeDao
 import org.iesharia.composeroomapp.data.entity.Task
+import org.iesharia.composeroomapp.data.entity.TaskType
 
-@Database(entities = [Task::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Task::class, TaskType::class], // Incluye Task y TaskType
+    version = 2, // Incrementa la versión debido al cambio en la estructura
+    exportSchema = true // Cambiar a true si deseas exportar el esquema para inspecciones futuras
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
+    abstract fun taskTypeDao(): TaskTypeDao // Añade el DAO para TaskType
 
     companion object {
         @Volatile
@@ -21,7 +28,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "task_database"
-                ).fallbackToDestructiveMigration()
+                )
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
