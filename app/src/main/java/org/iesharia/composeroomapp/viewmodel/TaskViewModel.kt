@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.iesharia.composeroomapp.data.Task
-import org.iesharia.composeroomapp.data.TaskDao
+import org.iesharia.composeroomapp.data.entity.Task
+import org.iesharia.composeroomapp.data.dao.TaskDao
 
 class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
@@ -28,13 +28,13 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
 
     fun addTask(task: Task) {
         viewModelScope.launch {
-            taskDao.insert(task)
+            taskDao.insertTask(task)
         }
     }
 
-    fun deleteTask(taskId: Int) {
+    fun deleteTask(task: Task) {
         viewModelScope.launch {
-            taskDao.delete(taskId)
+            taskDao.deleteTask(task)
         }
     }
 }
