@@ -15,6 +15,9 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
     val tasks: StateFlow<List<Task>> = _tasks
 
+    private val _currentTask = MutableStateFlow<Task?>(null)
+    val currentTask: StateFlow<Task?> = _currentTask
+
     init {
         loadTasks()
     }
@@ -30,28 +33,31 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
     fun addTask(task: Task) {
         viewModelScope.launch {
             taskDao.insertTask(task)
+            loadTasks()
         }
     }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
             taskDao.deleteTask(task)
+            loadTasks()
         }
     }
 
     fun updateTask(task: Task) {
         viewModelScope.launch {
             taskDao.updateTask(task)
+            loadTasks()
         }
     }
 
-    fun getTaskById(taskId: Int, callback: (Task?) -> Unit) {
+    fun loadTaskById(taskId: Int) {
         viewModelScope.launch {
-            val task = taskDao.getTaskById(taskId).firstOrNull()
-            callback(task)
+            _currentTask.value = taskDao.getTaskById(taskId).firstOrNull()
         }
     }
 }
+
 
 class TaskViewModelFactory(private val taskDao: TaskDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
