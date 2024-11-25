@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.iesharia.composeroomapp.data.entity.Task
 import org.iesharia.composeroomapp.data.dao.TaskDao
@@ -37,6 +38,25 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
             taskDao.deleteTask(task)
         }
     }
+
+    fun deleteTaskById(taskId: Int) {
+        viewModelScope.launch {
+            taskDao.deleteTaskById(taskId)
+        }
+    }
+
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            taskDao.updateTask(task)
+        }
+    }
+
+    fun getTaskById(taskId: Int, callback: (Task?) -> Unit) {
+        viewModelScope.launch {
+            val task = taskDao.getTaskById(taskId).firstOrNull()
+            callback(task)
+        }
+    }
 }
 
 class TaskViewModelFactory(private val taskDao: TaskDao) : ViewModelProvider.Factory {
@@ -45,6 +65,6 @@ class TaskViewModelFactory(private val taskDao: TaskDao) : ViewModelProvider.Fac
             @Suppress("UNCHECKED_CAST")
             return TaskViewModel(taskDao) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("Clase ViewModel desconocida")
     }
 }
