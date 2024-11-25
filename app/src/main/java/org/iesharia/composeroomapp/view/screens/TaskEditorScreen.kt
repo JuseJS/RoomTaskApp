@@ -1,10 +1,12 @@
-package org.iesharia.composeroomapp.view
+package org.iesharia.composeroomapp.view.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,11 +23,11 @@ fun TaskEditorScreen(
     onNavigateToAddTaskType: () -> Unit
 
 ) {
-    var title by remember { mutableStateOf(task?.title ?: "") }
-    var taskTypeId by remember { mutableIntStateOf(task?.taskTypeId ?: 1) }
-    var description by remember { mutableStateOf(task?.description ?: "") }
+    var title by rememberSaveable { mutableStateOf(task?.title ?: "") }
+    var taskTypeId by rememberSaveable { mutableIntStateOf(task?.taskTypeId ?: 1) }
+    var description by rememberSaveable { mutableStateOf(task?.description ?: "") }
 
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("Seleccionar tipo") }
     val taskTypes by taskTypeViewModel.taskTypes.collectAsState()
 
@@ -111,10 +113,30 @@ fun TaskEditorScreen(
                                 }
                             )
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
                         DropdownMenuItem(
-                            text = { Text("Añadir Tipo de Tarea") },
+                            text = {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.Center // Centrar el contenido del Box
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Add,
+                                            contentDescription = "Añadir Tipo de Tarea",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            "Añadir Tipo de Tarea",
+                                            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary)
+                                        )
+                                    }
+                                }
+                            },
                             onClick = {
-                                { onNavigateToAddTaskType() }
+                                expanded = false
+                                onNavigateToAddTaskType()
                             }
                         )
                     }
