@@ -1,6 +1,8 @@
 package org.iesharia.composeroomapp.view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,7 +14,7 @@ import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskList(viewModel: TaskViewModel) {
+fun TaskList(viewModel: TaskViewModel, onNavigateToAddTask: () -> Unit) {
     val tasks by viewModel.tasks.collectAsState()
 
     var newTaskName by remember { mutableStateOf("") }
@@ -25,13 +27,25 @@ fun TaskList(viewModel: TaskViewModel) {
                     Text(
                         "Lista de Tareas",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.secondary // Color más distintivo
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background // Fondo transparente
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onNavigateToAddTask() },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Añadir Tarea"
+                )
+            }
         }
     ) { paddingValues ->
         Column(
@@ -42,47 +56,8 @@ fun TaskList(viewModel: TaskViewModel) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextField(
-                value = newTaskName,
-                onValueChange = { newTaskName = it },
-                label = { Text("New Task") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                    focusedLabelColor = MaterialTheme.colorScheme.primary,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            /*
-            Button(
-                onClick = {
-                    if (newTaskName.isNotBlank()) {
-                        coroutineScope.launch {
-                            viewModel.addTask(Task(name = newTaskName))
-                            newTaskName = ""
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Text("Add Task")
-            }
-            */
-
             tasks.forEach { task ->
-                TaskItem(task = task, onDelete = { viewModel.deleteTask(task.id) })
+                TaskItem(task = task, onDelete = { viewModel.deleteTask(task) })
             }
         }
     }
@@ -124,4 +99,3 @@ fun TaskItem(task: Task, onDelete: () -> Unit) {
         }
     }
 }
-
