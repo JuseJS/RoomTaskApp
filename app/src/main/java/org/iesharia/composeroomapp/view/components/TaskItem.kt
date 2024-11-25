@@ -3,6 +3,7 @@ package org.iesharia.composeroomapp.view.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,7 +12,12 @@ import androidx.compose.ui.unit.dp
 import org.iesharia.composeroomapp.data.entity.Task
 
 @Composable
-fun TaskItem(task: Task, taskTypeTitle: String, onDelete: () -> Unit) {
+fun TaskItem(
+    task: Task,
+    taskTypeTitle: String,
+    onDelete: () -> Unit,
+    onEdit: () -> Unit
+) {
     Card(
         onClick = { /* Do something */ },
         modifier = Modifier
@@ -37,10 +43,17 @@ fun TaskItem(task: Task, taskTypeTitle: String, onDelete: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.weight(1f)
                 )
+                IconButton(onClick = { onEdit() }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Editar Tipo de Tarea",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
                 IconButton(onClick = { onDelete() }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Task",
+                        contentDescription = "Eliminar Tipo de Tarea",
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
