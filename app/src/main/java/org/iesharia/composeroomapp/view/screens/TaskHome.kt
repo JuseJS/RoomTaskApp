@@ -17,7 +17,14 @@ import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskHome(taskViewModel: TaskViewModel, taskTypeViewModel: TaskTypeViewModel, onNavigateToAddTask: () -> Unit, onNavigateToAddTaskType: () -> Unit) {
+fun TaskHome(
+    taskViewModel: TaskViewModel,
+    taskTypeViewModel: TaskTypeViewModel,
+    onNavigateToAddTask: () -> Unit,
+    onNavigateToAddTaskType: () -> Unit,
+    onNavigateToEditTask: (Int) -> Unit,
+    onNavigateToEditTaskType: (Int) -> Unit
+) {
     val tasks by taskViewModel.tasks.collectAsState()
     val taskTypes by taskTypeViewModel.taskTypes.collectAsState()
 
@@ -106,9 +113,18 @@ fun TaskHome(taskViewModel: TaskViewModel, taskTypeViewModel: TaskTypeViewModel,
             Spacer(modifier = Modifier.height(16.dp))
 
             if (selectedOption == "Lista de Tareas") {
-                TaskListContent(tasks = tasks, taskTypes = taskTypes, onDeleteTask = { taskViewModel.deleteTask(it) })
+                TaskListContent(
+                    tasks = tasks,
+                    taskTypes = taskTypes,
+                    onDeleteTask = { taskViewModel.deleteTask(it) },
+                    onEditTask = { onNavigateToEditTask(it.id) }
+                )
             } else {
-                TaskTypeListContent(taskTypes = taskTypes, onDeleteTaskType = { taskTypeViewModel.deleteTaskType(it) })
+                TaskTypeListContent(
+                    taskTypes = taskTypes,
+                    onDeleteTaskType = { taskTypeViewModel.deleteTaskType(it) },
+                    onEditTaskType = { onNavigateToEditTaskType(it.id) }
+                )
             }
         }
     }
