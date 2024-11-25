@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import org.iesharia.composeroomapp.data.entity.Task
-import org.iesharia.composeroomapp.data.dao.TaskDao
+import org.iesharia.composeroomapp.data.dao.TaskTypeDao
+import org.iesharia.composeroomapp.data.entity.TaskType
 
-class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
-    private val _tasks = MutableStateFlow<List<Task>>(emptyList())
-    val tasks: StateFlow<List<Task>> = _tasks
+class TaskTypeViewModel(private val taskTypeDao: TaskTypeDao) : ViewModel() {
+    private val _taskTypes = MutableStateFlow<List<TaskType>>(emptyList())
+    val taskTypes: StateFlow<List<TaskType>> = _taskTypes
 
     init {
         loadTasks()
@@ -21,49 +21,43 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
 
     private fun loadTasks() {
         viewModelScope.launch {
-            taskDao.getAllTasks().collectLatest { taskList ->
-                _tasks.value = taskList
+            taskTypeDao.getAllTaskTypes().collectLatest { taskTypeList ->
+                _taskTypes.value = taskTypeList
             }
         }
     }
 
-    fun addTask(task: Task) {
+    fun addTask(taskType: TaskType) {
         viewModelScope.launch {
-            taskDao.insertTask(task)
+            taskTypeDao.insertTaskType(taskType)
         }
     }
 
-    fun deleteTask(task: Task) {
+    fun deleteTask(taskType: TaskType) {
         viewModelScope.launch {
-            taskDao.deleteTask(task)
+            taskTypeDao.deleteTaskType(taskType)
         }
     }
 
-    fun deleteTaskById(taskId: Int) {
+    fun updateTask(taskType: TaskType) {
         viewModelScope.launch {
-            taskDao.deleteTaskById(taskId)
+            taskTypeDao.updateTaskType(taskType)
         }
     }
 
-    fun updateTask(task: Task) {
+    fun getTaskById(taskTypeId: Int, callback: (TaskType?) -> Unit) {
         viewModelScope.launch {
-            taskDao.updateTask(task)
-        }
-    }
-
-    fun getTaskById(taskId: Int, callback: (Task?) -> Unit) {
-        viewModelScope.launch {
-            val task = taskDao.getTaskById(taskId).firstOrNull()
+            val task = taskTypeDao.getTaskTypeById(taskTypeId).firstOrNull()
             callback(task)
         }
     }
 }
 
-class TaskViewModelFactory(private val taskDao: TaskDao) : ViewModelProvider.Factory {
+class TaskTypeViewModelFactory(private val taskTypeDao: TaskTypeDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TaskViewModel(taskDao) as T
+            return TaskTypeViewModel(taskTypeDao) as T
         }
         throw IllegalArgumentException("Clase ViewModel desconocida")
     }
