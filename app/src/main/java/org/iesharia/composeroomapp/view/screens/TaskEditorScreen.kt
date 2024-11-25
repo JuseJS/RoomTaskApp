@@ -6,7 +6,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,13 +22,19 @@ fun TaskEditorScreen(
     onNavigateToAddTaskType: () -> Unit
 
 ) {
-    var title by rememberSaveable { mutableStateOf(task?.title ?: "") }
-    var taskTypeId by rememberSaveable { mutableIntStateOf(task?.taskTypeId ?: 1) }
-    var description by rememberSaveable { mutableStateOf(task?.description ?: "") }
-
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var title by remember { mutableStateOf("") }
+    var taskTypeId by remember { mutableIntStateOf(1) }
+    var description by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("Seleccionar tipo") }
     val taskTypes by taskTypeViewModel.taskTypes.collectAsState()
+
+    LaunchedEffect(task) {
+        title = task?.title ?: ""
+        taskTypeId = task?.taskTypeId ?: 1
+        description = task?.description ?: ""
+        selectedOption = taskTypes.find { it.id == taskTypeId }?.title ?: "Seleccionar tipo de tarea"
+    }
 
     Scaffold(
         topBar = {
@@ -118,7 +123,7 @@ fun TaskEditorScreen(
                             text = {
                                 Box(
                                     modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center // Centrar el contenido del Box
+                                    contentAlignment = Alignment.Center
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
