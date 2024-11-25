@@ -20,7 +20,4 @@ interface TaskTypeDao {
 
     @Delete
     suspend fun deleteTaskType(taskType: TaskType)
-
-    @Query("DELETE FROM task_types WHERE id = :taskTypeId")
-    suspend fun deleteTaskTypeById(taskTypeId: Int)
 }
