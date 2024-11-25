@@ -39,12 +39,6 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
         }
     }
 
-    fun deleteTaskById(taskId: Int) {
-        viewModelScope.launch {
-            taskDao.deleteTaskById(taskId)
-        }
-    }
-
     fun updateTask(task: Task) {
         viewModelScope.launch {
             taskDao.updateTask(task)
