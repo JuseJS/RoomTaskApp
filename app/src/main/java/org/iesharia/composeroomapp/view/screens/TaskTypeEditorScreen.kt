@@ -89,7 +89,7 @@ fun TaskTypeEditorScreen(
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(if (taskType == null) "Guardar Tarea" else "Actualizar Tarea")
+                    Text(if (taskType == null) "Guardar Tipo de Tarea" else "Actualizar Tipo de Tarea")
                 }
 
                 // Botón de cancelar
