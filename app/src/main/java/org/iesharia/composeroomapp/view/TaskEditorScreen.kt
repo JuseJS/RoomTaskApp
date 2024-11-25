@@ -1,7 +1,7 @@
 package org.iesharia.composeroomapp.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -10,19 +10,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.iesharia.composeroomapp.data.entity.Task
+import org.iesharia.composeroomapp.viewmodel.TaskTypeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskEditorScreen(
     task: Task? = null,
     onSaveTask: (Task) -> Unit,
+    taskTypeViewModel: TaskTypeViewModel,
     onCancel: () -> Unit
 ) {
+    // Campos de la tarea
     var title by remember { mutableStateOf(task?.title ?: "") }
-    var description by remember { mutableStateOf(task?.description ?: "") }
     var taskTypeId by remember { mutableIntStateOf(task?.taskTypeId ?: 1) }
+    var description by remember { mutableStateOf(task?.description ?: "") }
+
+    // Menú desplegable
     var expanded by remember { mutableStateOf(false) }
-    val textFieldState = rememberTextFieldState(options[0])
+    var selectedOption by remember { mutableStateOf("Seleccionar tipo") }
+    val taskTypes by taskTypeViewModel.taskTypes.collectAsState()
 
     Scaffold(
         topBar = {
@@ -48,41 +54,55 @@ fun TaskEditorScreen(
                     .align(Alignment.TopStart),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Campo de título
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Título") },
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                // Menú desplegable
                 ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onExpandedChange = { expanded = it },
+                    onExpandedChange = { expanded = !expanded }
                 ) {
-                    TextField(
-                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                        state = textFieldState,
+                    OutlinedTextField(
+                        value = selectedOption,
+                        onValueChange = {},
                         readOnly = true,
-                        lineLimits = TextFieldLineLimits.SingleLine,
-                        label = { Text("Label") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        label = { Text("Tipo de Tarea") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false },
+                        onDismissRequest = { expanded = false }
                     ) {
-                        options.forEach { option ->
+                        taskTypes.forEachIndexed { index, taskType ->
                             DropdownMenuItem(
-                                text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
+                                text = { Text(taskType.title) },
                                 onClick = {
-                                    textFieldState.setTextAndPlaceCursorAtEnd(option)
+                                    selectedOption = taskType.title
+                                    taskTypeId = taskType.id
                                     expanded = false
-                                },
-                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                }
                             )
                         }
+                        // Opción para añadir más tipos de tareas
+                        DropdownMenuItem(
+                            text = { Text("Añadir Tipo de Tarea") },
+                            onClick = {
+                                Log.d("TaskEditorScreen", "Añadir Tipo seleccionado")
+                                expanded = false
+                            }
+                        )
                     }
                 }
+
+                // Campo de descripción
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
@@ -90,28 +110,41 @@ fun TaskEditorScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            Button(
-                onClick = {
-                    if (title.isNotBlank() && description.isNotBlank()) {
-                        onSaveTask(
-                            Task(
-                                id = task?.id ?: 0,
-                                title = title,
-                                taskTypeId = taskTypeId,
-                                description = description
-                            )
-                        )
-                    }
-                },
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomCenter),
+                verticalArrangement = Arrangement.spacedBy(8.dp) // Espaciado entre botones
             ) {
-                Text(if (task == null) "Guardar Tarea" else "Actualizar Tarea")
+                // Boton de guardar tarea
+                Button(
+                    onClick = {
+                        if (title.isNotBlank() && description.isNotBlank()) {
+                            onSaveTask(
+                                Task(
+                                    id = task?.id ?: 0,
+                                    title = title,
+                                    taskTypeId = taskTypeId,
+                                    description = description
+                                )
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(if (task == null) "Guardar Tarea" else "Actualizar Tarea")
+                }
+
+                // Boton de cancelar
+                Button(
+                    onClick = onCancel,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Cancelar")
+                }
             }
         }
     }
 }
-
-
