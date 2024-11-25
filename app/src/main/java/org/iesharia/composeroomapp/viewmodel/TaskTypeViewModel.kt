@@ -27,25 +27,25 @@ class TaskTypeViewModel(private val taskTypeDao: TaskTypeDao) : ViewModel() {
         }
     }
 
-    fun addTask(taskType: TaskType) {
+    fun addTaskType(taskType: TaskType) {
         viewModelScope.launch {
             taskTypeDao.insertTaskType(taskType)
         }
     }
 
-    fun deleteTask(taskType: TaskType) {
+    fun deleteTaskType(taskType: TaskType) {
         viewModelScope.launch {
             taskTypeDao.deleteTaskType(taskType)
         }
     }
 
-    fun updateTask(taskType: TaskType) {
+    fun updateTaskType(taskType: TaskType) {
         viewModelScope.launch {
             taskTypeDao.updateTaskType(taskType)
         }
     }
 
-    fun getTaskById(taskTypeId: Int, callback: (TaskType?) -> Unit) {
+    fun getTaskTypeById(taskTypeId: Int, callback: (TaskType?) -> Unit) {
         viewModelScope.launch {
             val task = taskTypeDao.getTaskTypeById(taskTypeId).firstOrNull()
             callback(task)
@@ -55,10 +55,11 @@ class TaskTypeViewModel(private val taskTypeDao: TaskTypeDao) : ViewModel() {
 
 class TaskTypeViewModelFactory(private val taskTypeDao: TaskTypeDao) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(TaskTypeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return TaskTypeViewModel(taskTypeDao) as T
         }
         throw IllegalArgumentException("Clase ViewModel desconocida")
     }
 }
+
