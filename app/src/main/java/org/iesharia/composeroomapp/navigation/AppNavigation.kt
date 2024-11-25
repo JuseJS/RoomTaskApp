@@ -14,20 +14,23 @@ import org.iesharia.composeroomapp.view.TaskList
 import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
 @Composable
-fun AppNavigation(navController: NavHostController, taskViewModel: TaskViewModel,
-                  context: android.content.Context
+fun AppNavigation(
+    navController: NavHostController,
+    taskViewModel: TaskViewModel,
+    context: android.content.Context
 ) {
     NavHost(
         navController = navController,
-        startDestination = "taskList"
+        startDestination = NavRoutes.TASKLIST
     ) {
-        composable("taskList") {
+        composable(NavRoutes.TASKLIST) {
             TaskList(
                 viewModel = taskViewModel,
-                onNavigateToAddTask = { navController.navigate("editTask") }
+                onNavigateToAddTask = { navController.navigate(NavRoutes.ADDTASK) }
             )
         }
-        composable("editTask") {
+
+        composable(NavRoutes.ADDTASK) {
             TaskEditorScreen(
                 onSaveTask = { task ->
                     taskViewModel.addTask(task)
@@ -36,18 +39,18 @@ fun AppNavigation(navController: NavHostController, taskViewModel: TaskViewModel
                 onCancel = { navController.popBackStack() }
             )
         }
-        composable("editTask/{taskId}") { backStackEntry ->
+
+        composable(NavRoutes.EDITTASK) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId")?.toIntOrNull()
 
             if (taskId == null) {
                 LaunchedEffect(Unit) {
                     Toast.makeText(
                         context,
-                        "El ID de la tarea no es válido.",
+                        "El ID de la tarea no es valido.",
                         Toast.LENGTH_SHORT
                     ).show()
-
-                    navController.popBackStack(route = "taskList", inclusive = false)
+                    navController.popBackStack(route = NavRoutes.TASKLIST, inclusive = false)
                 }
             } else {
                 val task = remember { mutableStateOf<Task?>(null) }
@@ -61,7 +64,7 @@ fun AppNavigation(navController: NavHostController, taskViewModel: TaskViewModel
                                 "La tarea no existe.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            navController.popBackStack(route = "taskList", inclusive = false)
+                            navController.popBackStack(route = NavRoutes.TASKLIST, inclusive = false)
                         }
                     }
                 }
