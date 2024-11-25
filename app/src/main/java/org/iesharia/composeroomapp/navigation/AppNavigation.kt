@@ -11,9 +11,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.iesharia.composeroomapp.data.entity.Task
 import org.iesharia.composeroomapp.data.entity.TaskType
-import org.iesharia.composeroomapp.view.TaskEditorScreen
-import org.iesharia.composeroomapp.view.TaskList
-import org.iesharia.composeroomapp.view.TaskTypeEditorScreen
+import org.iesharia.composeroomapp.view.screens.TaskEditorScreen
+import org.iesharia.composeroomapp.view.screens.TaskHome
+import org.iesharia.composeroomapp.view.screens.TaskTypeEditorScreen
 import org.iesharia.composeroomapp.viewmodel.TaskTypeViewModel
 import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
@@ -29,9 +29,11 @@ fun AppNavigation(
         startDestination = NavRoutes.TASKLIST
     ) {
         composable(NavRoutes.TASKLIST) {
-            TaskList(
-                viewModel = taskViewModel,
-                onNavigateToAddTask = { navController.navigate(NavRoutes.ADDTASK) }
+            TaskHome(
+                taskViewModel = taskViewModel,
+                taskTypeViewModel = taskTypeViewModel,
+                onNavigateToAddTask = { navController.navigate(NavRoutes.ADDTASK) },
+                onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASKTYPE) }
             )
         }
 
