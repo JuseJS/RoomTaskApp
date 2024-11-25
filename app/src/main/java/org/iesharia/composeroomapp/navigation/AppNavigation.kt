@@ -10,8 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.iesharia.composeroomapp.data.entity.Task
+import org.iesharia.composeroomapp.data.entity.TaskType
 import org.iesharia.composeroomapp.view.TaskEditorScreen
 import org.iesharia.composeroomapp.view.TaskList
+import org.iesharia.composeroomapp.view.TaskTypeEditorScreen
 import org.iesharia.composeroomapp.viewmodel.TaskTypeViewModel
 import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
@@ -69,11 +71,51 @@ fun AppNavigation(
                 }
             }
         }
+
+        composable(NavRoutes.ADDTASKTYPE) {
+            TaskTypeEditorScreen(
+                onSaveTaskType = { taskType ->
+                    handleSaveTaskType(taskType, taskTypeViewModel, navController)
+                },
+                onCancel = { navController.popBackStack() },
+            )
+        }
+
+        composable(NavRoutes.EDITTASK) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getString("taskId")?.toIntOrNull()
+
+            if (taskId == null) {
+                ShowToastAndNavigateBack(context, "El ID de la tarea no es válido.", navController)
+            } else {
+                LaunchedEffect(taskId) {
+                    taskViewModel.loadTaskById(taskId)
+                }
+
+                val task by taskViewModel.currentTask.collectAsState()
+
+                task?.let { nonNullTask ->
+                    TaskEditorScreen(
+                        task = nonNullTask,
+                        onSaveTask = { updatedTask ->
+                            handleSaveTask(updatedTask, taskViewModel, navController)
+                        },
+                        onCancel = { navController.popBackStack() },
+                        taskTypeViewModel = taskTypeViewModel,
+                        onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASK) }
+                    )
+                }
+            }
+        }
     }
 }
 
 private fun handleSaveTask(task: Task, taskViewModel: TaskViewModel, navController: NavHostController) {
     taskViewModel.addTask(task)
+    navController.popBackStack()
+}
+
+private fun handleSaveTaskType(taskType: TaskType, taskTypeViewModel: TaskTypeViewModel, navController: NavHostController) {
+    taskTypeViewModel.addTaskType(taskType)
     navController.popBackStack()
 }
 
