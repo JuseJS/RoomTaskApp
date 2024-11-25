@@ -19,7 +19,7 @@ fun TaskItem(
     onEdit: () -> Unit
 ) {
     Card(
-        onClick = { /* Do something */ },
+        onClick = { /*  */ },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 8.dp),
