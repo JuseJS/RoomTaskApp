@@ -10,13 +10,13 @@ import org.iesharia.composeroomapp.data.entity.Task
 import org.iesharia.composeroomapp.data.entity.TaskType
 
 @Database(
-    entities = [Task::class, TaskType::class], // Incluye Task y TaskType
-    version = 2, // Incrementa la versión debido al cambio en la estructura
-    exportSchema = true // Cambiar a true si deseas exportar el esquema para inspecciones futuras
+    entities = [Task::class, TaskType::class],
+    version = 2,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
-    abstract fun taskTypeDao(): TaskTypeDao // Añade el DAO para TaskType
+    abstract fun taskTypeDao(): TaskTypeDao
 
     companion object {
         @Volatile
