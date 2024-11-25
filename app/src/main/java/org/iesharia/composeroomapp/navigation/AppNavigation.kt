@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import org.iesharia.composeroomapp.data.entity.Task
 import org.iesharia.composeroomapp.data.entity.TaskType
 import org.iesharia.composeroomapp.view.screens.TaskEditorScreen
@@ -33,7 +34,9 @@ fun AppNavigation(
                 taskViewModel = taskViewModel,
                 taskTypeViewModel = taskTypeViewModel,
                 onNavigateToAddTask = { navController.navigate(NavRoutes.ADDTASK) },
-                onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASKTYPE) }
+                onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASKTYPE) },
+                onNavigateToEditTask = { taskId -> navController.navigate(NavRoutes.EDITTASK.replace("{taskId}", taskId.toString())) },
+                onNavigateToEditTaskType = { taskTypeId -> navController.navigate(NavRoutes.EDITTASKTYPE.replace("{taskTypeId}", taskTypeId.toString())) }
             )
         }
 
@@ -48,7 +51,10 @@ fun AppNavigation(
             )
         }
 
-        composable(NavRoutes.EDITTASK) { backStackEntry ->
+        composable(
+            route = NavRoutes.EDITTASK,
+            arguments = listOf(navArgument("taskId") { nullable = true })
+        ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId")?.toIntOrNull()
 
             if (taskId == null) {
@@ -83,7 +89,10 @@ fun AppNavigation(
             )
         }
 
-        composable(NavRoutes.EDITTASKTYPE) { backStackEntry ->
+        composable(
+            route = NavRoutes.EDITTASKTYPE,
+            arguments = listOf(navArgument("taskTypeId") { nullable = true })
+        ) { backStackEntry ->
             val taskTypeId = backStackEntry.arguments?.getString("taskTypeId")?.toIntOrNull()
 
             if (taskTypeId == null) {
@@ -97,7 +106,7 @@ fun AppNavigation(
 
                 taskType?.let { nonNullTaskType ->
                     TaskTypeEditorScreen(
-                        taskType = nonNullTaskType,
+                        taskType = nonNullTaskType.copy(),
                         onSaveTaskType = { updatedTaskType ->
                             handleSaveTaskType(updatedTaskType, taskTypeViewModel, navController)
                         },
