@@ -30,9 +30,13 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
         }
     }
 
-    fun addTask(task: Task) {
+    fun saveTask(task: Task) {
         viewModelScope.launch {
-            taskDao.insertTask(task)
+            if (task.id == 0) {
+                taskDao.insertTask(task)
+            } else {
+                taskDao.updateTask(task)
+            }
             loadTasks()
         }
     }
@@ -40,13 +44,6 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
     fun deleteTask(task: Task) {
         viewModelScope.launch {
             taskDao.deleteTask(task)
-            loadTasks()
-        }
-    }
-
-    fun updateTask(task: Task) {
-        viewModelScope.launch {
-            taskDao.updateTask(task)
             loadTasks()
         }
     }
