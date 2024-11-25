@@ -1,6 +1,5 @@
 package org.iesharia.composeroomapp.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -18,14 +17,14 @@ fun TaskEditorScreen(
     task: Task? = null,
     onSaveTask: (Task) -> Unit,
     taskTypeViewModel: TaskTypeViewModel,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onNavigateToAddTaskType: () -> Unit
+
 ) {
-    // Campos de la tarea
     var title by remember { mutableStateOf(task?.title ?: "") }
     var taskTypeId by remember { mutableIntStateOf(task?.taskTypeId ?: 1) }
     var description by remember { mutableStateOf(task?.description ?: "") }
 
-    // Menú desplegable
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("Seleccionar tipo") }
     val taskTypes by taskTypeViewModel.taskTypes.collectAsState()
@@ -38,9 +37,14 @@ fun TaskEditorScreen(
                     IconButton(onClick = onCancel) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.secondary
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -59,6 +63,13 @@ fun TaskEditorScreen(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Título") },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        cursorColor = MaterialTheme.colorScheme.primary
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -75,7 +86,16 @@ fun TaskEditorScreen(
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
@@ -91,12 +111,10 @@ fun TaskEditorScreen(
                                 }
                             )
                         }
-                        // Opción para añadir más tipos de tareas
                         DropdownMenuItem(
                             text = { Text("Añadir Tipo de Tarea") },
                             onClick = {
-                                Log.d("TaskEditorScreen", "Añadir Tipo seleccionado")
-                                expanded = false
+                                { onNavigateToAddTaskType() }
                             }
                         )
                     }
@@ -107,6 +125,13 @@ fun TaskEditorScreen(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text("Descripción") },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        cursorColor = MaterialTheme.colorScheme.primary
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -116,9 +141,9 @@ fun TaskEditorScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .align(Alignment.BottomCenter),
-                verticalArrangement = Arrangement.spacedBy(8.dp) // Espaciado entre botones
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Boton de guardar tarea
+                // Botón de guardar tarea
                 Button(
                     onClick = {
                         if (title.isNotBlank() && description.isNotBlank()) {
@@ -132,14 +157,22 @@ fun TaskEditorScreen(
                             )
                         }
                     },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(if (task == null) "Guardar Tarea" else "Actualizar Tarea")
                 }
 
-                // Boton de cancelar
+                // Botón de cancelar
                 Button(
                     onClick = onCancel,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Cancelar")
