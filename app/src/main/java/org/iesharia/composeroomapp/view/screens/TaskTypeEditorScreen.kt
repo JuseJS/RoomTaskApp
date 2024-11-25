@@ -1,5 +1,6 @@
 package org.iesharia.composeroomapp.view.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -17,7 +18,13 @@ fun TaskTypeEditorScreen(
     onSaveTaskType: (TaskType) -> Unit,
     onCancel: () -> Unit
 ) {
-    var title by remember { mutableStateOf(taskType?.title ?: "") }
+    var title by remember { mutableStateOf("") }
+
+    LaunchedEffect(taskType) {
+        title = taskType?.title ?: ""
+    }
+
+    Log.d("TaskTypeEditorScreen", "TaskType: $taskType")
 
     Scaffold(
         topBar = {
