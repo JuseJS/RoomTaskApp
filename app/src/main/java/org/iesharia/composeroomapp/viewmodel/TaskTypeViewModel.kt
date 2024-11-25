@@ -15,11 +15,14 @@ class TaskTypeViewModel(private val taskTypeDao: TaskTypeDao) : ViewModel() {
     private val _taskTypes = MutableStateFlow<List<TaskType>>(emptyList())
     val taskTypes: StateFlow<List<TaskType>> = _taskTypes
 
+    private val _currentTaskType = MutableStateFlow<TaskType?>(null)
+    val currentTaskType: StateFlow<TaskType?> = _currentTaskType
+
     init {
-        loadTasks()
+        loadTaskTypes()
     }
 
-    private fun loadTasks() {
+    private fun loadTaskTypes() {
         viewModelScope.launch {
             taskTypeDao.getAllTaskTypes().collectLatest { taskTypeList ->
                 _taskTypes.value = taskTypeList
@@ -30,25 +33,27 @@ class TaskTypeViewModel(private val taskTypeDao: TaskTypeDao) : ViewModel() {
     fun addTaskType(taskType: TaskType) {
         viewModelScope.launch {
             taskTypeDao.insertTaskType(taskType)
+            loadTaskTypes()
         }
     }
 
     fun deleteTaskType(taskType: TaskType) {
         viewModelScope.launch {
             taskTypeDao.deleteTaskType(taskType)
+            loadTaskTypes()
         }
     }
 
     fun updateTaskType(taskType: TaskType) {
         viewModelScope.launch {
             taskTypeDao.updateTaskType(taskType)
+            loadTaskTypes()
         }
     }
 
-    fun getTaskTypeById(taskTypeId: Int, callback: (TaskType?) -> Unit) {
+    fun loadTaskTypeById(taskTypeId: Int) {
         viewModelScope.launch {
-            val task = taskTypeDao.getTaskTypeById(taskTypeId).firstOrNull()
-            callback(task)
+            _currentTaskType.value = taskTypeDao.getTaskTypeById(taskTypeId).firstOrNull()
         }
     }
 }
@@ -62,4 +67,3 @@ class TaskTypeViewModelFactory(private val taskTypeDao: TaskTypeDao) : ViewModel
         throw IllegalArgumentException("Clase ViewModel desconocida")
     }
 }
-
