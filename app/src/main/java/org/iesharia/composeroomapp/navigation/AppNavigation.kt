@@ -1,23 +1,26 @@
 package org.iesharia.composeroomapp.navigation
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.iesharia.composeroomapp.data.entity.Task
 import org.iesharia.composeroomapp.view.TaskEditorScreen
 import org.iesharia.composeroomapp.view.TaskList
+import org.iesharia.composeroomapp.viewmodel.TaskTypeViewModel
 import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 
 @Composable
 fun AppNavigation(
     navController: NavHostController,
     taskViewModel: TaskViewModel,
-    context: android.content.Context
+    taskTypeViewModel: TaskTypeViewModel,
+    context: Context
 ) {
     NavHost(
         navController = navController,
@@ -33,10 +36,11 @@ fun AppNavigation(
         composable(NavRoutes.ADDTASK) {
             TaskEditorScreen(
                 onSaveTask = { task ->
-                    taskViewModel.addTask(task)
-                    navController.popBackStack()
+                    handleSaveTask(task, taskViewModel, navController)
                 },
-                onCancel = { navController.popBackStack() }
+                onCancel = { navController.popBackStack() },
+                taskTypeViewModel = taskTypeViewModel,
+                onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASK) }
             )
         }
 
@@ -44,42 +48,39 @@ fun AppNavigation(
             val taskId = backStackEntry.arguments?.getString("taskId")?.toIntOrNull()
 
             if (taskId == null) {
-                LaunchedEffect(Unit) {
-                    Toast.makeText(
-                        context,
-                        "El ID de la tarea no es valido.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    navController.popBackStack(route = NavRoutes.TASKLIST, inclusive = false)
-                }
+                ShowToastAndNavigateBack(context, "El ID de la tarea no es válido.", navController)
             } else {
-                val task = remember { mutableStateOf<Task?>(null) }
-
                 LaunchedEffect(taskId) {
-                    taskViewModel.getTaskById(taskId) { retrievedTask ->
-                        task.value = retrievedTask
-                        if (retrievedTask == null) {
-                            Toast.makeText(
-                                context,
-                                "La tarea no existe.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            navController.popBackStack(route = NavRoutes.TASKLIST, inclusive = false)
-                        }
-                    }
+                    taskViewModel.loadTaskById(taskId)
                 }
 
-                if (task.value != null) {
+                val task by taskViewModel.currentTask.collectAsState()
+
+                task?.let { nonNullTask ->
                     TaskEditorScreen(
-                        task = task.value!!,
+                        task = nonNullTask,
                         onSaveTask = { updatedTask ->
-                            taskViewModel.updateTask(updatedTask)
-                            navController.popBackStack()
+                            handleSaveTask(updatedTask, taskViewModel, navController)
                         },
-                        onCancel = { navController.popBackStack() }
+                        onCancel = { navController.popBackStack() },
+                        taskTypeViewModel = taskTypeViewModel,
+                        onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASK) }
                     )
                 }
             }
         }
+    }
+}
+
+private fun handleSaveTask(task: Task, taskViewModel: TaskViewModel, navController: NavHostController) {
+    taskViewModel.addTask(task)
+    navController.popBackStack()
+}
+
+@Composable
+private fun ShowToastAndNavigateBack(context: Context, message: String, navController: NavHostController) {
+    LaunchedEffect(Unit) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        navController.popBackStack(route = NavRoutes.TASKLIST, inclusive = false)
     }
 }
