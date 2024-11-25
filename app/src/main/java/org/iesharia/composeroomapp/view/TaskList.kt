@@ -16,9 +16,6 @@ import org.iesharia.composeroomapp.viewmodel.TaskViewModel
 fun TaskList(viewModel: TaskViewModel, onNavigateToAddTask: () -> Unit) {
     val tasks by viewModel.tasks.collectAsState()
 
-    var newTaskName by remember { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
