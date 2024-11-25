@@ -5,9 +5,18 @@ import org.iesharia.composeroomapp.data.entity.Task
 import org.iesharia.composeroomapp.data.entity.TaskType
 
 @Composable
-fun TaskListContent(tasks: List<Task>, taskTypes: List<TaskType>, onDeleteTask: (Task) -> Unit) {
+fun TaskListContent(
+    tasks: List<Task>,
+    taskTypes: List<TaskType>,
+    onDeleteTask: (Task) -> Unit,
+    onEditTask: (Task) -> Unit,
+) {
     tasks.forEach { task ->
         val taskTypeTitle = taskTypes.find { it.id == task.taskTypeId }?.title ?: "Tipo Desconocido"
-        TaskItem(task = task, taskTypeTitle = taskTypeTitle, onDelete = { onDeleteTask(task) })
+        TaskItem(
+            task = task,
+            taskTypeTitle = taskTypeTitle,
+            onEdit = { onEditTask(task) },
+            onDelete = { onDeleteTask(task) })
     }
 }
