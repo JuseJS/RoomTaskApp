@@ -30,9 +30,13 @@ class TaskTypeViewModel(private val taskTypeDao: TaskTypeDao) : ViewModel() {
         }
     }
 
-    fun addTaskType(taskType: TaskType) {
+    fun saveTaskType(taskType: TaskType) {
         viewModelScope.launch {
-            taskTypeDao.insertTaskType(taskType)
+            if (taskType.id == 0) {
+                taskTypeDao.insertTaskType(taskType)
+            } else {
+                taskTypeDao.updateTaskType(taskType)
+            }
             loadTaskTypes()
         }
     }
@@ -40,13 +44,6 @@ class TaskTypeViewModel(private val taskTypeDao: TaskTypeDao) : ViewModel() {
     fun deleteTaskType(taskType: TaskType) {
         viewModelScope.launch {
             taskTypeDao.deleteTaskType(taskType)
-            loadTaskTypes()
-        }
-    }
-
-    fun updateTaskType(taskType: TaskType) {
-        viewModelScope.launch {
-            taskTypeDao.updateTaskType(taskType)
             loadTaskTypes()
         }
     }
