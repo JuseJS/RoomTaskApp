@@ -81,27 +81,25 @@ fun AppNavigation(
             )
         }
 
-        composable(NavRoutes.EDITTASK) { backStackEntry ->
-            val taskId = backStackEntry.arguments?.getString("taskId")?.toIntOrNull()
+        composable(NavRoutes.EDITTASKTYPE) { backStackEntry ->
+            val taskTypeId = backStackEntry.arguments?.getString("taskTypeId")?.toIntOrNull()
 
-            if (taskId == null) {
-                ShowToastAndNavigateBack(context, "El ID de la tarea no es válido.", navController)
+            if (taskTypeId == null) {
+                ShowToastAndNavigateBack(context, "El ID del tipo de tarea no es válido.", navController)
             } else {
-                LaunchedEffect(taskId) {
-                    taskViewModel.loadTaskById(taskId)
+                LaunchedEffect(taskTypeId) {
+                    taskTypeViewModel.loadTaskTypeById(taskTypeId)
                 }
 
-                val task by taskViewModel.currentTask.collectAsState()
+                val taskType by taskTypeViewModel.currentTaskType.collectAsState()
 
-                task?.let { nonNullTask ->
-                    TaskEditorScreen(
-                        task = nonNullTask,
-                        onSaveTask = { updatedTask ->
-                            handleSaveTask(updatedTask, taskViewModel, navController)
+                taskType?.let { nonNullTaskType ->
+                    TaskTypeEditorScreen(
+                        taskType = nonNullTaskType,
+                        onSaveTaskType = { updatedTaskType ->
+                            handleSaveTaskType(updatedTaskType, taskTypeViewModel, navController)
                         },
-                        onCancel = { navController.popBackStack() },
-                        taskTypeViewModel = taskTypeViewModel,
-                        onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASK) }
+                        onCancel = { navController.popBackStack() }
                     )
                 }
             }
@@ -110,12 +108,12 @@ fun AppNavigation(
 }
 
 private fun handleSaveTask(task: Task, taskViewModel: TaskViewModel, navController: NavHostController) {
-    taskViewModel.addTask(task)
+    taskViewModel.saveTask(task)
     navController.popBackStack()
 }
 
 private fun handleSaveTaskType(taskType: TaskType, taskTypeViewModel: TaskTypeViewModel, navController: NavHostController) {
-    taskTypeViewModel.addTaskType(taskType)
+    taskTypeViewModel.saveTaskType(taskType)
     navController.popBackStack()
 }
 
