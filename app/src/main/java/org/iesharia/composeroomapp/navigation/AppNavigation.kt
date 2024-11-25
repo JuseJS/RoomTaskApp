@@ -44,7 +44,7 @@ fun AppNavigation(
                 },
                 onCancel = { navController.popBackStack() },
                 taskTypeViewModel = taskTypeViewModel,
-                onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASK) }
+                onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASKTYPE) }
             )
         }
 
@@ -68,7 +68,7 @@ fun AppNavigation(
                         },
                         onCancel = { navController.popBackStack() },
                         taskTypeViewModel = taskTypeViewModel,
-                        onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASK) }
+                        onNavigateToAddTaskType = { navController.navigate(NavRoutes.ADDTASKTYPE) }
                     )
                 }
             }
